@@ -57,7 +57,7 @@
                 bylLekcji++;
                 bylCounter.textContent = bylLekcji;
                 pozostaleLekcje--;
-                liczbaPozostalychLekcji.textContent = pozostaleLekcje;
+                liczbaPozostalychLekcji.textContent = pozostaleLekcji;
                 bylButton.disabled = true; // Wyłącz przycisk po kliknięciu
             }
         });
@@ -72,19 +72,14 @@
         const countDown = () => {
             const currentTime = new Date();
             
-            // Sprawdź, czy dzisiaj jest dzień tygodnia od poniedziałku do piątku
-            if (currentTime.getDay() >= 1 && currentTime.getDay() <= 5) {
-                for (let i = 0; i < lekcje.length; i++) {
-                    const startTime = lekcje[i].startTime;
-                    const endTime = lekcje[i].endTime;
-                    
-                    if (currentTime >= startTime && currentTime <= endTime) {
-                        currentLekcja = i;
-                        break;
-                    }
+            for (let i = 0; i < lekcje.length; i++) {
+                const startTime = lekcje[i].startTime;
+                const endTime = lekcje[i].endTime;
+                
+                if (currentTime >= startTime && currentTime <= endTime) {
+                    currentLekcja = i;
+                    break;
                 }
-            } else {
-                currentLekcja = 0;
             }
             
             if (currentLekcja < lekcje.length) {
@@ -97,7 +92,7 @@
                         const timeLeft = lekcje[currentLekcja].startTime - currentTime;
                         displayTimeLeft(timeLeft);
                         pozostaleLekcje--; // Odejmij lekcję
-                        liczbaPozostalychLekcji.textContent = pozostaleLekcje;
+                        liczbaPozostalychLekcji.textContent = pozostaleLekcji;
                         bylButton.disabled = false; // Włącz przycisk
                     }
                 } else {
@@ -126,7 +121,10 @@
             { startTime: new Date(new Date().setHours(12, 20, 0, 0)), endTime: new Date(new Date().setHours(13, 5, 0, 0)) },
             { startTime: new Date(new Date().setHours(13, 10, 0, 0)), endTime: new Date(new Date().setHours(13, 55, 0, 0)) },
             { startTime: new Date(new Date().setHours(14, 0, 0, 0)), endTime: new Date(new Date().setHours(14, 45, 0, 0)) },
-            { startTime: new Date(new Date().setHours(14, 50, 0, 0)), endTime: new Date(new Date().setHours(15, 35, 0, 0)) }
+            { startTime: new Date(new Date().setHours(14, 55, 0, 0)), endTime: new Date(new Date().setHours(15, 40, 0, 0)) },
+            { startTime: new Date(new Date().setHours(15, 45, 0, 0)), endTime: new Date(new Date().setHours(16, 30, 0, 0)) },
+            { startTime: new Date(new Date().setHours(16, 35, 0, 0)), endTime: new Date(new Date().setHours(17, 20, 0, 0)) },
+            { startTime: new Date(new Date().setHours(17, 25, 0, 0)), endTime: new Date(new Date().setHours(18, 10, 0, 0)) }
         ];
 
         // Rozpocznij odliczanie
