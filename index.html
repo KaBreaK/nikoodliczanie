@@ -8,7 +8,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    sss
     <div class="container">
         <h1>Podliczanie obecności i odliczanie lekcji</h1>
 
@@ -34,6 +33,10 @@
                 <h2>Liczba pozostałych lekcji</h2>
                 <p id="liczbaPozostalychLekcji">30</p>
             </div>
+            <div class="col">
+                <h2>Godziny od pierwszej lekcji</h2>
+                <p id="godzinyOdPierwszejLekcji">0 godz. 0 min.</p>
+            </div>
         </div>
     </div>
 
@@ -46,11 +49,13 @@
         const nieBylCounter = document.getElementById('nieBylCounter');
         const czasDoKonca = document.getElementById('czasDoKonca');
         const liczbaPozostalychLekcji = document.getElementById('liczbaPozostalychLekcji');
+        const godzinyOdPierwszejLekcji = document.getElementById('godzinyOdPierwszejLekcji');
 
         let bylLekcji = 0;
         let nieBylLekcji = 0;
         let currentLekcja = 0;
         let pozostaleLekcje = 30; // Początkowa liczba pozostałych lekcji
+        let firstLekcjaTime = null; // Czas rozpoczęcia pierwszej lekcji
 
         // Funkcja do zwiększania licznika "Był"
         bylButton.addEventListener('click', () => {
@@ -73,19 +78,22 @@
         const countDown = () => {
             const currentTime = new Date();
 
-            // Sprawdź, czy dzisiaj jest dzień tygodnia od poniedziałku do piątku
-            if (currentTime.getDay() >= 1 && currentTime.getDay() <= 5) {
-                for (let i = 0; i < lekcje.length; i++) {
-                    const startTime = lekcje[i].startTime;
-                    const endTime = lekcje[i].endTime;
+            if (firstLekcjaTime) {
+                const timeDiff = currentTime - firstLekcjaTime;
+                const hours = Math.floor(timeDiff / 3600000);
+                const minutes = Math.floor((timeDiff % 3600000) / 60000);
 
-                    if (currentTime >= startTime && currentTime <= endTime) {
-                        currentLekcja = i;
-                        break;
-                    }
+                godzinyOdPierwszejLekcji.textContent = `${hours} godz. ${minutes} min.`;
+            }
+
+            for (let i = 0; i < lekcje.length; i++) {
+                const startTime = lekcje[i].startTime;
+                const endTime = lekcje[i].endTime;
+
+                if (currentTime >= startTime && currentTime <= endTime) {
+                    currentLekcja = i;
+                    break;
                 }
-            } else {
-                currentLekcja = 0;
             }
 
             if (currentLekcja < lekcje.length) {
@@ -98,7 +106,7 @@
                         const timeLeft = lekcje[currentLekcja].startTime - currentTime;
                         displayTimeLeft(timeLeft);
                         pozostaleLekcje--; // Odejmij lekcję
-                        liczbaPozostalychLekcji.textContent = pozostaleLekcje;
+                        liczbaPozostalychLekcji.textContent = pozostaleLekcji;
                         bylButton.disabled = false; // Włącz przycisk
                     }
                 } else {
@@ -127,8 +135,14 @@
             { startTime: new Date(new Date().setHours(12, 20, 0, 0)), endTime: new Date(new Date().setHours(13, 5, 0, 0)) },
             { startTime: new Date(new Date().setHours(13, 10, 0, 0)), endTime: new Date(new Date().setHours(13, 55, 0, 0)) },
             { startTime: new Date(new Date().setHours(14, 0, 0, 0)), endTime: new Date(new Date().setHours(14, 45, 0, 0)) },
-            { startTime: new Date(new Date().setHours(14, 50, 0, 0)), endTime: new Date(new Date().setHours(15, 35, 0, 0)) }
+            { startTime: new Date(new Date().setHours(14, 55, 0, 0)), endTime: new Date(new Date().setHours(15, 40, 0, 0)) },
+            { startTime: new Date(new Date().setHours(15, 45, 0, 0)), endTime: new Date(new Date().setHours(16, 30, 0, 0)) },
+            { startTime: new Date(new Date().setHours(16, 35, 0, 0)), endTime: new Date(new Date().setHours(17, 20, 0, 0)) },
+            { startTime: new Date(new Date().setHours(17, 25, 0, 0)), endTime: new Date(new Date().setHours(18, 10, 0, 0)) }
         ];
+
+        // Określenie pierwszej lekcji
+        firstLekcjaTime = lekcje[0].startTime;
 
         // Rozpocznij odliczanie
         countDown();
