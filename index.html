@@ -33,10 +33,6 @@
                 <h2>Liczba pozostałych lekcji</h2>
                 <p id="liczbaPozostalychLekcji">30</p>
             </div>
-            <div class="col">
-                <h2>Liczba minętych lekcji</h2>
-                <p id="liczbaMinytychLekcji">0</p>
-            </div>
         </div>
     </div>
 
@@ -49,22 +45,19 @@
         const nieBylCounter = document.getElementById('nieBylCounter');
         const czasDoKonca = document.getElementById('czasDoKonca');
         const liczbaPozostalychLekcji = document.getElementById('liczbaPozostalychLekcji');
-        const liczbaMinytychLekcji = document.getElementById('liczbaMinytychLekcji');
 
         let bylLekcji = 0;
         let nieBylLekcji = 0;
         let currentLekcja = 0;
-        let minieteLekcje = 0;
+        let pozostaleLekcje = 30; // Początkowa liczba pozostałych lekcji
 
         // Funkcja do zwiększania licznika "Był"
         bylButton.addEventListener('click', () => {
             if (currentLekcja < lekcje.length) {
                 bylLekcji++;
                 bylCounter.textContent = bylLekcji;
-                minieteLekcje++;
-                liczbaMinytychLekcji.textContent = minieteLekcje;
                 pozostaleLekcje--;
-                liczbaPozostalychLekcji.textContent = pozostaleLekcji;
+                liczbaPozostalychLekcji.textContent = pozostaleLekcje;
                 bylButton.disabled = true; // Wyłącz przycisk po kliknięciu
             }
         });
@@ -78,17 +71,22 @@
         // Funkcja do odliczania czasu do końca lekcji
         const countDown = () => {
             const currentTime = new Date();
-            
-            for (let i = 0; i < lekcje.length; i++) {
-                const startTime = lekcje[i].startTime;
-                const endTime = lekcje[i].endTime;
-                
-                if (currentTime >= startTime && currentTime <= endTime) {
-                    currentLekcja = i;
-                    break;
+
+            // Sprawdź, czy dzisiaj jest dzień tygodnia od poniedziałku do piątku
+            if (currentTime.getDay() >= 1 && currentTime.getDay() <= 5) {
+                for (let i = 0; i < lekcje.length; i++) {
+                    const startTime = lekcje[i].startTime;
+                    const endTime = lekcje[i].endTime;
+
+                    if (currentTime >= startTime && currentTime <= endTime) {
+                        currentLekcja = i;
+                        break;
+                    }
                 }
+            } else {
+                currentLekcja = 0;
             }
-            
+
             if (currentLekcja < lekcje.length) {
                 const endTime = lekcje[currentLekcja].endTime;
 
@@ -99,7 +97,7 @@
                         const timeLeft = lekcje[currentLekcja].startTime - currentTime;
                         displayTimeLeft(timeLeft);
                         pozostaleLekcje--; // Odejmij lekcję
-                        liczbaPozostalychLekcji.textContent = pozostaleLekcji;
+                        liczbaPozostalychLekcji.textContent = pozostaleLekcje;
                         bylButton.disabled = false; // Włącz przycisk
                     }
                 } else {
@@ -128,30 +126,8 @@
             { startTime: new Date(new Date().setHours(12, 20, 0, 0)), endTime: new Date(new Date().setHours(13, 5, 0, 0)) },
             { startTime: new Date(new Date().setHours(13, 10, 0, 0)), endTime: new Date(new Date().setHours(13, 55, 0, 0)) },
             { startTime: new Date(new Date().setHours(14, 0, 0, 0)), endTime: new Date(new Date().setHours(14, 45, 0, 0)) },
-            { startTime: new Date(new Date().setHours(14, 55, 0, 0)), endTime: new Date(new Date().setHours(15, 40, 0, 0)) },
-            { startTime: new Date(new Date().setHours(15, 45, 0, 0)), endTime: new Date(new Date().setHours(16, 30, 0, 0)) },
-            { startTime: new Date(new Date().setHours(16, 35, 0, 0)), endTime: new Date(new Date().setHours(17, 20, 0, 0)) },
-            { startTime: new Date(new Date().setHours(17, 25, 0, 0)), endTime: new Date(new Date().setHours(18, 10, 0, 0)) }
+            { startTime: new Date(new Date().setHours(14, 50, 0, 0)), endTime: new Date(new Date().setHours(15, 35, 0, 0)) }
         ];
-
-        // Oblicz liczbę minętych lekcji od pierwszej lekcji w piątek
-        const currentTime = new Date();
-        let firstFriday = new Date();
-        firstFriday.setHours(8, 0, 0, 0); // Pierwsza lekcja w piątek
-        while (firstFriday.getDay() !== 5) {
-            firstFriday.setDate(firstFriday.getDate() - 1);
-        }
-        minieteLekcje = 0;
-        if (currentTime > firstFriday) {
-            for (let i = 0; i < lekcje.length; i++) {
-                if (currentTime >= lekcje[i].endTime) {
-                    minieteLekcje++;
-                } else {
-                    break;
-                }
-            }
-        }
-        liczbaMinytychLekcji.textContent = minieteLekcje;
 
         // Rozpocznij odliczanie
         countDown();
