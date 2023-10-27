@@ -49,7 +49,6 @@
         let bylLekcji = 0;
         let nieBylLekcji = 0;
         let currentLekcja = 0;
-        let pozostaleLekcje = 30; // Początkowa liczba pozostałych lekcji
 
         // Funkcja do zwiększania licznika "Był"
         bylButton.addEventListener('click', () => {
@@ -57,7 +56,7 @@
                 bylLekcji++;
                 bylCounter.textContent = bylLekcji;
                 pozostaleLekcje--;
-                liczbaPozostalychLekcji.textContent = pozostaleLekcji;
+                liczbaPozostalychLekcji.textContent = pozostaleLekcje;
                 bylButton.disabled = true; // Wyłącz przycisk po kliknięciu
             }
         });
