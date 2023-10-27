@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Podliczanie obecności i odliczanie lekcji</title>
+    <!-- Dodaj Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Podliczanie obecności i odliczanie lekcji</h1>
+
+        <div class="row">
+            <div class="col">
+                <h2>Był</h2>
+                <p id="bylCounter">0</p>
+            </div>
+            <div class="col">
+                <h2>Nie był</h2>
+                <p id="nieBylCounter">0</p>
+            </div>
+            <div class="col">
+                <h2>Odliczanie do końca lekcji</h2>
+                <p id="czasDoKonca">00:00:00</p>
+            </div>
+        </div>
+
+        <button id="bylButton" class="btn btn-primary">Był na lekcji</button>
+
+        <div class="row mt-4">
+            <div class="col">
+                <h2>Liczba pozostałych lekcji</h2>
+                <p id="liczbaPozostalychLekcji">30</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dodaj Bootstrap JS i Twój skrypt JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Skrypt JavaScript
+        const bylButton = document.getElementById('bylButton');
+        const bylCounter = document.getElementById('bylCounter');
+        const nieBylCounter = document.getElementById('nieBylCounter');
+        const czasDoKonca = document.getElementById('czasDoKonca');
+        const liczbaPozostalychLekcji = document.getElementById('liczbaPozostalychLekcji');
+
+        let bylLekcji = 0;
+        let nieBylLekcji = 0;
+        let currentLekcja = 0;
+        let pozostaleLekcje = 30; // Początkowa liczba pozostałych lekcji
+
+        // Funkcja do zwiększania licznika "Był"
+        bylButton.addEventListener('click', () => {
+            if (currentLekcja < lekcje.length) {
+                bylLekcji++;
+                bylCounter.textContent = bylLekcji;
+                pozostaleLekcje--;
+                liczbaPozostalychLekcji.textContent = pozostaleLekcje;
+                bylButton.disabled = true; // Wyłącz przycisk po kliknięciu
+            }
+        });
+
+        // Funkcja do zwiększania licznika "Nie był"
+        const updateNieBylCounter = () => {
+            nieBylLekcji++;
+            nieBylCounter.textContent = nieBylLekcji;
+        };
+
+        // Funkcja do odliczania czasu do końca lekcji
+        const countDown = () => {
+            const currentTime = new Date();
+            
+            // Sprawdź, czy dzisiaj jest dzień tygodnia od poniedziałku do piątku
+            if (currentTime.getDay() >= 1 && currentTime.getDay() <= 5) {
+                for (let i = 0; i < lekcje.length; i++) {
+                    const startTime = lekcje[i].startTime;
+                    const endTime = lekcje[i].endTime;
+                    
+                    if (currentTime >= startTime && currentTime <= endTime) {
+                        currentLekcja = i;
+                        break;
+                    }
+                }
+            } else {
+                currentLekcja = 0;
+            }
+            
+            if (currentLekcja < lekcje.length) {
+                const endTime = lekcje[currentLekcja].endTime;
+
+                if (currentTime >= endTime) {
+                    updateNieBylCounter();
+                    currentLekcja++;
+                    if (currentLekcja < lekcje.length) {
+                        const timeLeft = lekcje[currentLekcja].startTime - currentTime;
+                        displayTimeLeft(timeLeft);
+                        pozostaleLekcje--; // Odejmij lekcję
+                        liczbaPozostalychLekcji.textContent = pozostaleLekcje;
+                        bylButton.disabled = false; // Włącz przycisk
+                    }
+                } else {
+                    const timeLeft = endTime - currentTime;
+                    displayTimeLeft(timeLeft);
+                }
+            }
+        };
+
+        // Funkcja do wyświetlania czasu w odpowiednim formacie
+        const displayTimeLeft = (time) => {
+            const hours = Math.floor(time / 3600000);
+            const minutes = Math.floor((time % 3600000) / 60000);
+            const seconds = Math.floor((time % 60000) / 1000);
+
+            czasDoKonca.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        };
+
+        // Określenie godzin rozpoczęcia i zakończenia lekcji
+        const lekcje = [
+            { startTime: new Date(new Date().setHours(8, 0, 0, 0)), endTime: new Date(new Date().setHours(8, 45, 0, 0)) },
+            { startTime: new Date(new Date().setHours(8, 50, 0, 0)), endTime: new Date(new Date().setHours(9, 35, 0, 0)) },
+            { startTime: new Date(new Date().setHours(9, 40, 0, 0)), endTime: new Date(new Date().setHours(10, 25, 0, 0)) },
+            { startTime: new Date(new Date().setHours(10, 30, 0, 0)), endTime: new Date(new Date().setHours(11, 15, 0, 0)) },
+            { startTime: new Date(new Date().setHours(11, 30, 0, 0)), endTime: new Date(new Date().setHours(12, 15, 0, 0)) },
+            { startTime: new Date(new Date().setHours(12, 20, 0, 0)), endTime: new Date(new Date().setHours(13, 5, 0, 0)) },
+            { startTime: new Date(new Date().setHours(13, 10, 0, 0)), endTime: new Date(new Date().setHours(13, 55, 0, 0)) },
+            { startTime: new Date(new Date().setHours(14, 0, 0, 0)), endTime: new Date(new Date().setHours(14, 45, 0, 0)) },
+            { startTime: new Date(new Date().setHours(14, 50, 0, 0)), endTime: new Date(new Date().setHours(15, 35, 0, 0)) }
+        ];
+
+        // Rozpocznij odliczanie
+        countDown();
+        setInterval(countDown, 1000);
+    </script>
+</body>
+</html>
