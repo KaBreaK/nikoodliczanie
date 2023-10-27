@@ -31,7 +31,7 @@
         <div class="row mt-4">
             <div class="col">
                 <h2>Liczba pozostałych lekcji</h2>
-                <p id="liczbaPozostalychLekcji">33</p>
+                <p id="liczbaPozostalychLekcji">30</p>
             </div>
         </div>
     </div>
@@ -48,15 +48,16 @@
 
         let bylLekcji = 0;
         let nieBylLekcji = 0;
-        let currentLekcja = 0;
+        let currentLekcja = -1; // Ustaw na -1, aby wskazywać, że lekcje jeszcze się nie zaczęły
+        let pozostaleLekcje = 30; // Początkowa liczba pozostałych lekcji
 
         // Funkcja do zwiększania licznika "Był"
         bylButton.addEventListener('click', () => {
-            if (currentLekcja < lekcje.length) {
+            if (currentLekcja < lekcje.length && currentLekcja >= 0) {
                 bylLekcji++;
                 bylCounter.textContent = bylLekcji;
                 pozostaleLekcje--;
-                liczbaPozostalychLekcji.textContent = pozostaleLekcje;
+                liczbaPozostalychLekcji.textContent = pozostaleLekcji;
                 bylButton.disabled = true; // Wyłącz przycisk po kliknięciu
             }
         });
@@ -71,17 +72,20 @@
         const countDown = () => {
             const currentTime = new Date();
             
-            for (let i = 0; i < lekcje.length; i++) {
-                const startTime = lekcje[i].startTime;
-                const endTime = lekcje[i].endTime;
-                
-                if (currentTime >= startTime && currentTime <= endTime) {
-                    currentLekcja = i;
-                    break;
+            if (currentLekcja === -1) {
+                // Sprawdź, czy dzisiaj jest dzień tygodnia od poniedziałku do piątku
+                if (currentTime.getDay() >= 1 && currentTime.getDay() <= 5) {
+                    for (let i = 0; i < lekcje.length; i++) {
+                        const startTime = lekcje[i].startTime;
+                        if (currentTime >= startTime) {
+                            currentLekcja = i;
+                            break;
+                        }
+                    }
                 }
             }
             
-            if (currentLekcja < lekcje.length) {
+            if (currentLekcja < lekcje.length && currentLekcja >= 0) {
                 const endTime = lekcje[currentLekcja].endTime;
 
                 if (currentTime >= endTime) {
